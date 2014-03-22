@@ -9,20 +9,17 @@ using System.Configuration;
 
 namespace ExecuteSQL
 {
-    public class ExecuteStoredProcedure
+    public class ExecuteStoredProcedure : ExecuteSQL
     {
-        private SqlConnection SqlConnection { get; set; }
-        private string ConnectionStringName { get; set; }
-        private string ProcedureName { get; set; }
-        private SqlCommand SqlCommand { get; set; }
+        private string ProcedureName { get; set; }        
 
         public ExecuteStoredProcedure(string connectionStringName, string procedureName)
         {
             try
-            {
-                SqlConnection = SetupSQLConnection(connectionStringName);
-                ProcedureName = null;
-                SqlCommand = SetupSqlCommand(procedureName);
+            {                
+                this.SqlConnection = this.SetupSQLConnection(connectionStringName);
+                this.ProcedureName = null;
+                this.SqlCommand = this.SetupSqlCommand(procedureName, CommandType.StoredProcedure);
             }
             catch(Exception ex)
             {
@@ -37,9 +34,9 @@ namespace ExecuteSQL
         {
             try
             {
-                SqlConnection = SetupSQLConnection(connectionStringName);
-                ProcedureName = procedureName;
-                SqlCommand = SetupSqlCommand(procedureName);
+                this.SqlConnection = this.SetupSQLConnection(connectionStringName);
+                this.ProcedureName = procedureName;
+                this.SqlCommand = this.SetupSqlCommand(procedureName, CommandType.StoredProcedure);
                 SetupSQLParameters(parameters);
             }
             catch(Exception ex)
@@ -51,57 +48,6 @@ namespace ExecuteSQL
             }
         }
 
-        private SqlConnection SetupSQLConnection()
-        {
-            try
-            {
-                SqlConnection connection = new SqlConnection();
-                return connection;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine
-                    ("Catching the {0} exception triggers the finally block.",
-                    ex.GetType());
-                throw;
-            }
-        }
-
-        private SqlConnection SetupSQLConnection(string connectionStringName)
-        {
-            try
-            {
-                SqlConnection connection = new SqlConnection();
-                connection.ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
-                return connection;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine
-                    ("Catching the {0} exception triggers the finally block.",
-                    ex.GetType());
-                throw;
-            }
-        }
-
-        private SqlCommand SetupSqlCommand()
-        {
-            try
-            {
-                SqlCommand sqlCommand = new SqlCommand();
-                SqlCommand.CommandType = CommandType.StoredProcedure;
-                SqlCommand.Connection = SqlConnection;
-                return sqlCommand;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine
-                    ("Catching the {0} exception triggers the finally block.",
-                    ex.GetType());
-                throw;                
-            }
-        }
-
         public void SetupSQLParameters(List<SqlParameter> sqlParameters)
         {
             try
@@ -110,7 +56,7 @@ namespace ExecuteSQL
                 {
                     foreach (SqlParameter param in sqlParameters)
                     {
-                        SqlCommand.Parameters.Add(param);
+                        this.SqlCommand.Parameters.Add(param);
                     }
                 }
             }
@@ -122,46 +68,5 @@ namespace ExecuteSQL
                 throw;
             }
         }
-
-        private SqlCommand SetupSqlCommand(string procedureName)
-        {
-            try
-            {
-                SqlCommand sqlCommand = new SqlCommand();
-                sqlCommand.CommandText = procedureName;
-                sqlCommand.CommandType = CommandType.StoredProcedure;
-                sqlCommand.Connection = SqlConnection;
-                return sqlCommand;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine
-                    ("Catching the {0} exception triggers the finally block.",
-                    ex.GetType());
-                throw;                
-            }
-        }
-
-        public DataSet Execute()
-        {
-            try
-            {
-                DataSet dataSet = new DataSet();
-                SqlConnection.Open();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(SqlCommand);
-                dataAdapter.Fill(dataSet, "procedureResults");
-                SqlConnection.Close();
-                return dataSet;
-            }
-            catch(Exception ex)
-            {
-                SqlConnection.Close();
-                Console.WriteLine
-                    ("Catching the {0} exception triggers the finally block.",
-                    ex.GetType());
-                throw;  
-            }
-        }
-
     }
 }

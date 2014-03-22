@@ -51,14 +51,15 @@ namespace ExecuteSQL
             }
         }
 
-        public SqlDataReader Execute()
+        public DataSet Execute()
         {
             try
             {
-                SqlDataReader dataReader = null;
+                DataSet dataSet = new DataSet();
                 this.SqlConnection.Open();
-                dataReader = this.SqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
-                return dataReader;
+                SqlDataAdapter dataAdapter = new SqlDataAdapter(SqlCommand);
+                dataAdapter.Fill(dataSet, "results");     
+                return dataSet;
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace ExecuteSQL
                     ("Catching the {0} exception triggers the finally block.",
                     ex.GetType());
                 throw;
-            }
+            }            
         }
     }
 }

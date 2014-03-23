@@ -1,6 +1,6 @@
 ExecuteSQL
 ==========
-
+<pre>
 .NET Class that simplifies the process of executing a stored procedure and sql text. Returns a dataset.
 Example usage:
 Executing a stored procedure:
@@ -36,3 +36,4 @@ ExecuteSQLText.cs
 ExecuteStoredProcedure.cs
   -Class file for executing inline sql statements; inherits from ExecuteSQL
     - ExecuteStoredProcedure(string connectionStringName, string procedureName, [List<SqlParameters> parameters])
+</pre>

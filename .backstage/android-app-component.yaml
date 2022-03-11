@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: android-marketplace-app
+  title: Android Marketplace App
+  description: Android Marketplace app for bidding on and buying vehicles
+  tags:
+    - android
+spec:
+  type: mobile-app
+  lifecycle: production
+  owner: marketplace
+  dependsOn:
+    - component:easy-pass-gateway
+  consumesApis:
+    - easy-pass-bff
+    # TODO: Add the rest of the APIs this project consumes, once their components are made
